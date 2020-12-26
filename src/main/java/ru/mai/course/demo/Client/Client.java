@@ -17,6 +17,19 @@ public class Client {
     private Integer flight;
     private Integer seat;
 
+    public Client() {
+    }
+
+    public Client(Integer id, String name, String surname, String series, String num, String phoneNumber, Integer flight, Integer seat) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.series = series;
+        this.num = num;
+        this.phoneNumber = phoneNumber;
+        this.flight = flight;
+        this.seat = seat;
+    }
 
     @Id
     @Column(name = "id")
@@ -90,7 +103,7 @@ public class Client {
         try {
             this.flight = flight;
         }catch(Exception e){
-            System.out.println("Error blyat");
+            System.out.println("Error");
         }
     }
 

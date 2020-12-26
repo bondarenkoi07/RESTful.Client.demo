@@ -44,10 +44,13 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public boolean update(Client client,Integer id) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        System.out.println("current id, seat is "+id+", " + client.getSeat());
+        String hql = "from Client  where seat = "  + client.getSeat() + " and not id = "+client.getId()+"";
+        List<Client> clients = (ArrayList<Client>)session.createQuery(hql).list();
+        boolean valid = clients.isEmpty();
+        System.out.println("id  different, validation = "+valid);
 
-        String hql = "from Client  where seat = '"  + client.getSeat() + "'";
-        List<Client> clients = session.createQuery(hql).list();
-        if (clients == null || clients.isEmpty()) {
+        if(valid){
             Client ClientToUpdate = clientDAO.getOne(id);
             ClientToUpdate.setName(client.getName());
             ClientToUpdate.setSurname(client.getSurname());
@@ -59,10 +62,8 @@ public class ClientServiceImpl implements ClientService {
 
             clientDAO.save(ClientToUpdate);
             return true;
-        }else{
-            return false;
         }
-
+        return false;
     }
 
     @Override

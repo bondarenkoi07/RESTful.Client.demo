@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/static/css/main.css}" rel="stylesheet" type="text/css" media="all">
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+--></head>
+<body >
+    <header>
+        <form th:action="@{/sort}"  method="get">
+            <input type="text" name="field" value="" id="field"  readonly  required/>
+            <select type="text" name="order" required>
+                <option >ASC</option>
+                <option >DESC</option>
+            </select>
+            <input type="submit" value="sort">
+        </form>
+    </header>
+    <div class="table-bordered">
+    <table border="1">
+        <tr id="parent">
+            <th id="id">id</th>
+            <th id="name">name</th>
+            <th id="surname">surname</th>
+            <th id="series">passport series</th>
+            <th id="num">passport number</th>
+            <th id="phone_number">phone number</th>
+            <th id="flight">flight</th>
+            <th id="seat">seat</th>
+            <th>action</th>
+        </tr>
+        <tr th:each ="client : ${clients}">
+            <td th:utext="${client.id}"></td>
+            <td th:utext="${client.name}">...</td>
+            <td th:utext="${client.surname}">...</td>
+            <td th:utext="${client.series}"></td>
+            <td th:utext="${client.num}"></td>
+            <td th:utext="${client.phoneNumber}"></td>
+            <td th:utext="${client.flight}"></td>
+            <td th:utext="${client.seat}"></td>
+            <td><a th:href="@{/client/{path}(path = ${client.id})}">Modify</a></td>
+        </tr>
+        <tr>
+            <form th:action="@{/clients}" th:object="${formClient}" method="POST">
+                <td>add</td>
+                <td><input type="text" th:field="*{name}"  required/></td>
+                <td><input type="text" th:field="*{surname}" required/></td>
+                <td><input type="text" th:field="*{series}" required/></td>
+                <td><input type="text" th:field="*{num}" required/></td>
+                <td><input type="text" th:field="*{phoneNumber}" required/></td>
+                <td><input type="number" th:field="*{flight}" required/></td>
+                <td><input type="number" th:field="*{seat}" required/></td>
+                <td><input type="submit" value="Create" /></td>
+            </form>
+        </tr>
+    </table>
+    </div>
+    <script th:src="@{/static/js/select.js}" defer></script>
+</body>
+</html>

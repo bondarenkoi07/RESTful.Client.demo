@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:utext="${status}" ></title>
+</head>
+<body>
+    <div class="container" th:switch="${status}">
+        <p th:case="succeed" >all is ok</p>
+        <p th:case="failure" th:utext="${log}"></p>
+    </div>
+</body>
+</html>

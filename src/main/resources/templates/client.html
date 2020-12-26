@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/static/css/main.css}" rel="stylesheet" type="text/css" media="all">
+    <title th:utext="${client.name }+' '+${client.surname}"></title>
+</head>
+<body>
+
+    <header th:insert=" ~{/nav :: navigation}">
+
+    </header>
+    <table boarder="1">
+        <thead>
+            <th>id</th>
+            <th>name</th>
+            <th>surname</th>
+            <th>passport series</th>
+            <th>passport number</th>
+            <th>phone number</th>
+            <th>flight</th>
+            <th>seat</th>
+            <th>action</th>
+        </thead>
+        <tbody>
+        <tr>
+            <form th:action="@{/update/{path}(path = ${client.id})}" th:object="${client}" method="post">
+                <td><input type="number" th:field="*{id}"  th:value="*{id}" disabled/></td>
+                <td><input type="text" th:field="*{name}"  th:value="*{name}" required/></td>
+                <td><input type="text" th:field="*{surname}" th:value="*{surname}" required/></td>
+                <td><input type="text" th:field="*{series}" th:value="*{series}" required/></td>
+                <td><input type="text" th:field="*{num}" th:value="*{num}" required/></td>
+                <td><input type="text" th:field="*{phoneNumber}" th:value="*{phoneNumber}" required/></td>
+                <td><input type="number" th:field="*{flight}" th:value="*{flight}" required/></td>
+                <td><input type="number" th:field="*{seat}" th:value="*{seat}" required/></td>
+                <td><input type="submit" value="update" /></td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{/delete/{path}(path = ${client.id})}" th:object="${client}" method="get">
+        <td><input type="submit" value="Delete" /></td>
+    </form>
+    <div class="container-fluid">
+
+    </div>
+</body>
+</html>

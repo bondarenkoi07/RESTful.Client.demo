@@ -3,9 +3,11 @@ package ru.mai.course.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.course.demo.Client.Client;
-import ru.mai.course.demo.service.ClientService;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.mai.course.demo.service.ClientServiceImpl;
 
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 public class ClientController {
 
     private final ClientServiceImpl clientService;
@@ -24,59 +26,68 @@ public class ClientController {
     }
 
     @PostMapping(value = "/clients")
-    public ResponseEntity<?> create(@RequestBody Client client) {
+    public String create(Model model, @ModelAttribute("clientForm") Client client) {
         if (client.getName() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            model.addAttribute("status","failure");
+            model.addAttribute("log","column name caused error!");
         }else{
+            model.addAttribute("status","succeed");
             clientService.create(client);
-            return new ResponseEntity<>(HttpStatus.CREATED);
         }
+        return "status";
     }
 
-    @GetMapping(value = "/clients")
-    public ResponseEntity<List<Client>> read() {
+    @GetMapping(value = "/")
+    public String read(ModelMap model) {
         final List<Client> clients = clientService.readAll();
-
-        return clients != null &&  !clients.isEmpty()
-                ? new ResponseEntity<>(clients, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        model.addAttribute("clients",clients);
+        model.addAttribute("formClient", new Client());
+        return "clients";
     }
 
-    @GetMapping(value = "/clients/{id}")
-    public ResponseEntity<Client> read(@PathVariable(name = "id") int id) throws Exception {
+    @GetMapping(value = "/client/{id}")
+    public String read(@PathVariable(name = "id") int id, Model model) throws Exception {
         final Optional<Client> client = Optional.ofNullable(clientService.read(id));
-
-        return client.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        model.addAttribute("client",client.orElse(new Client()));
+        return "client";
     }
 
-    @PutMapping(value = "/clients/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Integer id, @RequestBody Client client) {
+    @PostMapping(value = "/update/{id}")
+    public String update(Model model, @ModelAttribute("client") Client client,@PathVariable int id) {
+        System.out.println("hello, how low?"+client.toString());
         final boolean updated = clientService.update(client,id);
+        if (updated) {
+            model.addAttribute("status","succeed");
 
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }else{
+            model.addAttribute("status","failure");
+            model.addAttribute("log","column name caused error!");
+        }
+        return "status";
     }
 
-    @DeleteMapping(value = "/clients/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") int id) {
+    @GetMapping(value = "/delete/{id}")
+    public String delete(@PathVariable(name = "id") int id, Model model) {
         boolean deleted = true;
         try {
             clientService.delete(id);
         }catch (Exception e){
              deleted = false;
         }
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        if (deleted){
+            model.addAttribute("status","succeed");
+        }else{
+            model.addAttribute("status","failure");
+            model.addAttribute("log","column name caused error!");
+        }
+        return "status";
     }
 
-    @GetMapping(value = "/clients/order_by/{field}/{order}")
-    public ResponseEntity<?> readOrder(@PathVariable(name = "field") String field, @PathVariable(name = "order")  String order) {
+    @GetMapping(value = "/sort")
+    public String readOrder(Model model,@RequestParam(name = "field") String field, @RequestParam(name = "order")  String order) {
         ArrayList<Client> clients = clientService.readAllOrderByField(field,order);
-
-        return clients != null &&  !clients.isEmpty()
-                ? new ResponseEntity<>(clients,HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        model.addAttribute("clients",clients);
+        model.addAttribute("formClient", new Client());
+        return "clients";
     }
 }

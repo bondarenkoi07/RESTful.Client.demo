@@ -1,14 +1,12 @@
 package ru.mai.course.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.course.demo.Client.Client;
-import org.springframework.web.bind.annotation.RequestBody;
+import ru.mai.course.demo.service.BoardService;
 import ru.mai.course.demo.service.ClientServiceImpl;
 
 import java.util.ArrayList;
@@ -19,10 +17,12 @@ import java.util.Optional;
 public class ClientController {
 
     private final ClientServiceImpl clientService;
+    private final BoardService boardService;
 
     @Autowired
-    public ClientController(ClientServiceImpl clientService) {
+    public ClientController(ClientServiceImpl clientService, BoardService boardService) {
         this.clientService = clientService;
+        this.boardService = boardService;
     }
 
     @PostMapping(value = "/clients")

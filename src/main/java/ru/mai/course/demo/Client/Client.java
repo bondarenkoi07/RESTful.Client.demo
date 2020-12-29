@@ -17,18 +17,6 @@ public class Client {
     private Integer flight;
     private Integer seat;
 
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    @ManyToOne
-    @JoinColumn(name="flight", referencedColumnName = "id")
-    private Board board;
-
     public Client() {
     }
 

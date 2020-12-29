@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.course.demo.Client.Client;
-import ru.mai.course.demo.service.BoardService;
 import ru.mai.course.demo.service.ClientServiceImpl;
 
 import java.util.ArrayList;
@@ -17,17 +16,21 @@ import java.util.Optional;
 public class ClientController {
 
     private final ClientServiceImpl clientService;
-    private final BoardService boardService;
 
     @Autowired
-    public ClientController(ClientServiceImpl clientService, BoardService boardService) {
+    public ClientController(ClientServiceImpl clientService) {
         this.clientService = clientService;
-        this.boardService = boardService;
     }
 
     @PostMapping(value = "/clients")
     public String create(Model model, @ModelAttribute("clientForm") Client client) {
-        if (client.getName() == null) {
+        if ((client.getName() == null) || (client.getFlight() == null)
+                || (client.getSeat()==null) || (client.getNum()==null)
+                || (client.getSeries()==null) || (client.getPhoneNumber()==null)
+                || (client.getSurname()==null)
+                || (client.getFlight()>0)
+                || (client.getSeat()>0)
+                || (client.getId()>0)) {
             model.addAttribute("status","failure");
             model.addAttribute("log","column name caused error!");
         }else{
@@ -54,14 +57,27 @@ public class ClientController {
 
     @PostMapping(value = "/update/{id}")
     public String update(Model model, @ModelAttribute("client") Client client,@PathVariable int id) {
-        System.out.println("hello, how low?"+client.toString());
-        final boolean updated = clientService.update(client,id);
-        if (updated) {
-            model.addAttribute("status","succeed");
+        if ( !(client.getName() == null)
+                || (client.getFlight() == null) || (client.getSeat()==null)
+                || (client.getNum()==null)  || (client.getSeries()==null)
+                || (client.getPhoneNumber()==null)
+                || (client.getSurname()==null)
+                || (client.getFlight()>0)
+                || (client.getSeat()>0)
+                || (client.getId()>0)
+        ){
+            final boolean updated = clientService.update(client,id);
+            if (updated) {
+                model.addAttribute("status","succeed");
+            }else{
+                model.addAttribute("status","failure");
+                model.addAttribute("log","constraint error");
+            }
+
 
         }else{
             model.addAttribute("status","failure");
-            model.addAttribute("log","column name caused error!");
+            model.addAttribute("log","wrong data!");
         }
         return "status";
     }

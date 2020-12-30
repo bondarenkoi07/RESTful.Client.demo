@@ -47,7 +47,9 @@ public class ClientServiceImpl implements ClientService {
         System.out.println("current id, seat is "+id+", " + client.getSeat());
         String hql = "from Client  where seat = "  + client.getSeat() + " and not id = "+client.getId()+"";
         List<Client> clients = (ArrayList<Client>)session.createQuery(hql).list();
-        boolean valid = clients.isEmpty();
+        hql = "from Client  where id = "+client.getId()+"";
+        List<Client> clientsId = (ArrayList<Client>)session.createQuery(hql).list();
+        boolean valid = clients.isEmpty() && !clientsId.isEmpty();
         System.out.println("id  different, validation = "+valid);
 
         if(valid){

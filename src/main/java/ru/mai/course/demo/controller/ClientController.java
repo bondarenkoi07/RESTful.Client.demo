@@ -28,9 +28,8 @@ public class ClientController {
                 || (client.getSeat()==null) || (client.getNum()==null)
                 || (client.getSeries()==null) || (client.getPhoneNumber()==null)
                 || (client.getSurname()==null)
-                || (client.getFlight()>0)
-                || (client.getSeat()>0)
-                || (client.getId()>0)) {
+                || !(client.getFlight()>0)
+                || !(client.getSeat()>0)) {
             model.addAttribute("status","failure");
             model.addAttribute("log","column name caused error!");
         }else{
@@ -49,23 +48,28 @@ public class ClientController {
     }
 
     @GetMapping(value = "/client/{id}")
-    public String read(@PathVariable(name = "id") int id, Model model) throws Exception {
-        final Optional<Client> client = Optional.ofNullable(clientService.read(id));
-        model.addAttribute("client",client.orElse(new Client()));
+    public String read(@PathVariable(name = "id") int id, Model model) {
+        try {
+            final Optional<Client> client = Optional.ofNullable(clientService.read(id));
+            model.addAttribute("client",client.orElse(new Client()));
+        }catch(Exception e){
+            model.addAttribute("client",new Client());
+        }
         return "client";
     }
 
     @PostMapping(value = "/update/{id}")
     public String update(Model model, @ModelAttribute("client") Client client,@PathVariable int id) {
-        if ( !(client.getName() == null)
+        if (!( (client.getName() == null)
                 || (client.getFlight() == null) || (client.getSeat()==null)
                 || (client.getNum()==null)  || (client.getSeries()==null)
                 || (client.getPhoneNumber()==null)
                 || (client.getSurname()==null)
-                || (client.getFlight()>0)
-                || (client.getSeat()>0)
-                || (client.getId()>0)
-        ){
+                || !(client.getFlight()>0)
+                || !(client.getSeat()>0)
+                || !(client.getId()>0
+                || (client.getId() != id))
+        )){
             final boolean updated = clientService.update(client,id);
             if (updated) {
                 model.addAttribute("status","succeed");
